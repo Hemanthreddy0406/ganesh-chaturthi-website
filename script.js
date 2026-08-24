@@ -5,7 +5,7 @@
 const SITE_CONFIG = {
   COLONY_NAME: "Padmavathi Nagar",              // e.g. "Green Valley Colony"
   WHATSAPP_NUMBER: "919603392455",         // country code + number, digits only, no + or spaces
-  INSTAGRAM_URL: "https://instagram.com/your_colony_handle",
+  INSTAGRAM_URL: "https://www.instagram.com/padmavathi_nagar_ganesh_utsav?igsi=ZHA3Z2xmYXN2dHU3&utm_source=qr",
   GANESH_NAME: "Simha Trishul Ganesha",
   EVENT_DATE: "14 September 2026",
 
