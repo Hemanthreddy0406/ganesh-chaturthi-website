@@ -289,6 +289,100 @@ function markStaticReveals() {
   document.querySelectorAll(".info-card, .split-block").forEach((el) => el.classList.add("reveal"));
 }
 
+function setupScrollProgress(){
+  const bar = document.getElementById("scroll-progress");
+  if(!bar) return;
+  const update = () => {
+    const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+    bar.style.width = (scrollable > 0 ? (window.scrollY / scrollable) * 100 : 0) + "%";
+  };
+  document.addEventListener("scroll", update, { passive: true });
+  update();
+}
+
+function setupPetals(){
+  const field = document.getElementById("petal-field");
+  if(!field || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const symbols = ["🌸","🌼","🪷"];
+  const count = window.innerWidth < 600 ? 8 : 16;
+  for(let i=0;i<count;i++){
+    const petal = document.createElement("span");
+    petal.className = "petal";
+    petal.textContent = symbols[Math.floor(Math.random()*symbols.length)];
+    petal.style.left = Math.random()*100 + "vw";
+    petal.style.setProperty("--drift", (Math.random()*80-40) + "px");
+    petal.style.animationDuration = (10 + Math.random()*10) + "s";
+    petal.style.animationDelay = (Math.random()*10) + "s";
+    field.appendChild(petal);
+  }
+}
+
+function setupCountdown(){
+  const el = document.getElementById("countdown");
+  if(!el) return;
+  const target = new Date(SITE_CONFIG.EVENT_DATE);
+  if(isNaN(target.getTime())){ el.style.display = "none"; return; }
+  const daysEl = document.getElementById("cd-days"), hoursEl = document.getElementById("cd-hours"),
+        minsEl = document.getElementById("cd-mins"), secsEl = document.getElementById("cd-secs");
+  function tick(){
+    const diff = target.getTime() - Date.now();
+    if(diff <= 0){
+      el.innerHTML = '<p class="countdown-done">Ganpati Bappa Morya! 🙏</p>';
+      clearInterval(timer); return;
+    }
+    daysEl.textContent = String(Math.floor(diff/86400000)).padStart(2,"0");
+    hoursEl.textContent = String(Math.floor((diff%86400000)/3600000)).padStart(2,"0");
+    minsEl.textContent = String(Math.floor((diff%3600000)/60000)).padStart(2,"0");
+    secsEl.textContent = String(Math.floor((diff%60000)/1000)).padStart(2,"0");
+  }
+  tick();
+  const timer = setInterval(tick, 1000);
+}
+
+function setupBell(){
+  const btn = document.getElementById("bell-fab");
+  if(!btn) return;
+  let audioCtx;
+  btn.addEventListener("click", () => {
+    btn.classList.remove("ringing"); void btn.offsetWidth; btn.classList.add("ringing");
+    try{
+      audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+      const now = audioCtx.currentTime;
+      [660, 990, 1320].forEach((freq, i) => {
+        const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+        osc.type = "sine"; osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0.001, now);
+        gain.gain.exponentialRampToValueAtTime(0.18/(i+1), now+0.02);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now+1.4);
+        osc.connect(gain).connect(audioCtx.destination);
+        osc.start(now); osc.stop(now+1.5);
+      });
+    }catch(e){}
+  });
+}
+
+function setupDiyaWall(){
+  const form = document.getElementById("diya-form"), grid = document.getElementById("diya-wall-grid"),
+        input = document.getElementById("diya-name");
+  if(!form || !grid) return;
+  const KEY = "ganesh2026_diyas", MAX = 60;
+  const load = () => { try{ return JSON.parse(localStorage.getItem(KEY)) || []; }catch(e){ return []; } };
+  const save = (list) => { try{ localStorage.setItem(KEY, JSON.stringify(list)); }catch(e){} };
+  const render = (list) => { grid.innerHTML = list.map(name =>
+    `<div class="diya"><span class="diya-flame" aria-hidden="true">🪔</span><span class="diya-name">${name}</span></div>`
+  ).join(""); };
+  let diyas = load();
+  render(diyas);
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const name = input.value.trim();
+    if(!name) return;
+    diyas.unshift(name);
+    if(diyas.length > MAX) diyas = diyas.slice(0, MAX);
+    save(diyas); render(diyas); input.value = "";
+  });
+}
+
 /* =========================================================
    INIT
    ========================================================= */
@@ -301,4 +395,9 @@ document.addEventListener("DOMContentLoaded", () => {
   markStaticReveals();
   setupReveal();
   setupActiveNav();
+  setupScrollProgress();
+  setupPetals();
+  setupCountdown();
+  setupBell();
+  setupDiyaWall();
 });
