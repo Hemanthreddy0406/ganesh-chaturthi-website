@@ -4,7 +4,7 @@
    ========================================================= */
 const SITE_CONFIG = {
   COLONY_NAME: "Saheb Nagar",              // e.g. "Green Valley Colony"
-  WHATSAPP_NUMBER: "9603392455",         // country code + number, digits only, no + or spaces
+  WHATSAPP_NUMBER: "919603392455",         // country code + number, digits only, no + or spaces
   INSTAGRAM_URL: "https://instagram.com/your_colony_handle",
   GANESH_NAME: "Simha Trishul Ganesha",
   EVENT_DATE: "14 September 2026",
