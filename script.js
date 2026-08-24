@@ -3,7 +3,7 @@
    Edit everything here — no need to touch the rest of the code.
    ========================================================= */
 const SITE_CONFIG = {
-  COLONY_NAME: "Saheb Nagar",              // e.g. "Green Valley Colony"
+  COLONY_NAME: "Padmavathi Nagar",              // e.g. "Green Valley Colony"
   WHATSAPP_NUMBER: "919603392455",         // country code + number, digits only, no + or spaces
   INSTAGRAM_URL: "https://instagram.com/your_colony_handle",
   GANESH_NAME: "Simha Trishul Ganesha",
