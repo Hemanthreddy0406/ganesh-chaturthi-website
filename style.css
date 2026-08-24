@@ -722,3 +722,52 @@ button:focus-visible,
   font-size: 0.82rem;
   margin-top: 22px;
 }
+
+/* ===== Interactivity additions ===== */
+.scroll-progress{
+  position: fixed; top:0; left:0; height: 3px; width: 0%;
+  background: linear-gradient(90deg, var(--saffron), var(--gold));
+  z-index: 999; transition: width 0.1s ease-out;
+}
+
+.petal-field{ position: fixed; inset:0; pointer-events:none; z-index: 2; overflow:hidden; }
+.petal{ position:absolute; top:-40px; font-size: 1.1rem; opacity:0.7; animation: petal-fall linear infinite; }
+@keyframes petal-fall{
+  0%{ transform: translateY(-5vh) translateX(0) rotate(0deg); }
+  100%{ transform: translateY(105vh) translateX(var(--drift, 40px)) rotate(360deg); }
+}
+@media (prefers-reduced-motion: reduce){ .petal-field{ display:none; } }
+
+.countdown{ display:flex; gap: 18px; justify-content:center; margin: 0 0 34px; flex-wrap: wrap; }
+.countdown-item{
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-s);
+  padding: 12px 16px; min-width: 68px; text-align:center; box-shadow: var(--shadow-soft);
+}
+.countdown-num{ display:block; font-family: var(--font-display); font-weight:700; font-size: 1.5rem; color: var(--saffron-dark); }
+.countdown-label{ display:block; font-size: 0.7rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-secondary); margin-top: 2px; }
+.countdown-done{ font-family: var(--font-display); font-size: 1.2rem; color: var(--saffron-dark); }
+
+.bell-fab{
+  position: fixed; bottom: 24px; right: 24px; width: 60px; height:60px; border-radius:50%;
+  background: var(--saffron); border:none; box-shadow: 0 12px 28px rgba(200,79,28,0.4);
+  font-size: 1.6rem; cursor:pointer; z-index: 400; display:flex; align-items:center; justify-content:center;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+.bell-fab:hover{ background: var(--saffron-dark); transform: scale(1.06); }
+.bell-fab.ringing .bell-fab-icon{ animation: bell-swing 0.5s ease; }
+@keyframes bell-swing{
+  0%,100%{ transform: rotate(0deg); } 20%{ transform: rotate(-22deg); }
+  40%{ transform: rotate(18deg); } 60%{ transform: rotate(-12deg); } 80%{ transform: rotate(8deg); }
+}
+
+.diya-form{ display:flex; gap: 12px; flex-wrap:wrap; margin-bottom: 34px; }
+.diya-form input{ flex:1; min-width: 200px; padding: 14px 18px; border-radius: 999px; border: 1.5px solid var(--border); font: inherit; background: var(--surface); }
+.diya-wall{ display:flex; flex-wrap:wrap; gap: 14px; }
+.diya{
+  display:flex; flex-direction:column; align-items:center; gap: 4px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: var(--radius-s); padding: 12px 14px; min-width: 84px; box-shadow: var(--shadow-soft);
+}
+.diya-flame{ font-size: 1.4rem; animation: flicker 1.6s ease-in-out infinite; }
+.diya-name{ font-size: 0.78rem; font-weight:600; color: var(--text-secondary); max-width: 90px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+@keyframes flicker{ 0%,100%{ transform: scale(1); opacity:1; } 50%{ transform: scale(0.94); opacity:0.85; } }
+@media (prefers-reduced-motion: reduce){ .diya-flame{ animation:none; } }
