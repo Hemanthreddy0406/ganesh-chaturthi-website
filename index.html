@@ -18,6 +18,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="style.css" />
+<div class="scroll-progress" id="scroll-progress" aria-hidden="true"></div>
+<div class="petal-field" id="petal-field" aria-hidden="true"></div>
 </head>
 <body>
 
@@ -101,6 +103,13 @@
         </div>
       </div>
 
+  <div class="countdown" id="countdown" aria-live="polite">
+  <div class="countdown-item"><span class="countdown-num" id="cd-days">00</span><span class="countdown-label">Days</span></div>
+  <div class="countdown-item"><span class="countdown-num" id="cd-hours">00</span><span class="countdown-label">Hours</span></div>
+  <div class="countdown-item"><span class="countdown-num" id="cd-mins">00</span><span class="countdown-label">Mins</span></div>
+  <div class="countdown-item"><span class="countdown-num" id="cd-secs">00</span><span class="countdown-label">Secs</span></div>
+</div>
+      
       <div class="hero-actions">
         <a href="#chanda" class="btn btn-primary">Want to be a part of the celebration?</a>
         <a href="#memories" class="btn btn-ghost">Explore Our Memories &#128247;</a>
@@ -295,6 +304,21 @@
     </div>
   </section>
 
+  <section class="section section--warm" id="diya-wall">
+  <div class="container container--narrow">
+    <p class="eyebrow eyebrow--dark">Light one for Bappa</p>
+    <h2 class="section-title">Light a Diya</h2>
+    <p class="section-lead">Add your name to our wall of diyas. (Saved on your own device/browser.)</p>
+
+    <form class="diya-form" id="diya-form">
+      <input type="text" id="diya-name" placeholder="Your name" maxlength="30" required aria-label="Your name" />
+      <button type="submit" class="btn btn-primary">🪔 Light a Diya</button>
+    </form>
+
+    <div class="diya-wall" id="diya-wall-grid"></div>
+  </div>
+</section>
+  
   <!-- Community strip -->
   <section class="community-strip">
     <p>Everyone in our colony is welcome.</p>
@@ -331,6 +355,10 @@
   <p class="footer-note">Organised with devotion by the youth of our colony.</p>
 </footer>
 
+<button class="bell-fab" id="bell-fab" aria-label="Ring the temple bell">
+<span class="bell-fab-icon">🔔</span>
+</button>
+  
 <script src="script.js"></script>
 </body>
 </html>
