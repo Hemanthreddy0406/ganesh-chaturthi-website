@@ -379,8 +379,174 @@ function setupDiyaWall(){
     if(!name) return;
     diyas.unshift(name);
     if(diyas.length > MAX) diyas = diyas.slice(0, MAX);
-    save(diyas); render(diyas); input.value = "";
+    save(diyas); render(diyas);
+     /* ===== Confetti ===== */
+  function burstConfetti(){
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const symbols = ["🎉","🌸","✨","🪷","🎊"];
+  for(let i=0;i<24;i++){
+    const piece = document.createElement("span");
+    piece.className = "confetti-piece";
+    piece.textContent = symbols[Math.floor(Math.random()*symbols.length)];
+    piece.style.left = Math.random()*100 + "vw";
+    piece.style.animationDelay = (Math.random()*0.4) + "s";
+    piece.style.fontSize = (0.9 + Math.random()*0.8) + "rem";
+    document.body.appendChild(piece);
+    setTimeout(() => piece.remove(), 2800);
+  }
+}
+     input.value = "";
   });
+}
+
+/* ===== Confetti ===== */
+function burstConfetti(){
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const symbols = ["🎉","🌸","✨","🪷","🎊"];
+  for(let i=0;i<24;i++){
+    const piece = document.createElement("span");
+    piece.className = "confetti-piece";
+    piece.textContent = symbols[Math.floor(Math.random()*symbols.length)];
+    piece.style.left = Math.random()*100 + "vw";
+    piece.style.animationDelay = (Math.random()*0.4) + "s";
+    piece.style.fontSize = (0.9 + Math.random()*0.8) + "rem";
+    document.body.appendChild(piece);
+    setTimeout(() => piece.remove(), 2800);
+  }
+}
+
+/* ===== Modak catch game ===== */
+function setupModakGame(){
+  const canvas = document.getElementById("modak-canvas");
+  if(!canvas) return;
+  const ctx = canvas.getContext("2d");
+  const scoreEl = document.getElementById("modak-score");
+  const timeEl = document.getElementById("modak-time");
+  const startBtn = document.getElementById("modak-start");
+
+  let basketX = canvas.width/2, score = 0, timeLeft = 30, running = false;
+  let modaks = [], lastSpawn = 0, animId;
+
+  function pointerMove(e){
+    const rect = canvas.getBoundingClientRect();
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    basketX = Math.max(30, Math.min(canvas.width-30, clientX - rect.left));
+  }
+  canvas.addEventListener("mousemove", pointerMove);
+  canvas.addEventListener("touchmove", pointerMove, { passive: true });
+
+  function spawnModak(){
+    modaks.push({ x: 20 + Math.random()*(canvas.width-40), y: -20, speed: 2 + Math.random()*2 });
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    // basket
+    ctx.font = "40px serif";
+    ctx.fillText("🧺", basketX-20, canvas.height-20);
+    // modaks
+    ctx.font = "28px serif";
+    modaks.forEach(m => ctx.fillText("🍡", m.x-14, m.y));
+  }
+
+  function tick(ts){
+    if(!running) return;
+    if(!lastSpawn || ts - lastSpawn > 700){ spawnModak(); lastSpawn = ts; }
+    modaks.forEach(m => m.y += m.speed);
+    modaks = modaks.filter(m => {
+      if(m.y > canvas.height-40 && m.y < canvas.height-5 && Math.abs(m.x-basketX) < 34){
+        score++; scoreEl.textContent = score; return false;
+      }
+      return m.y < canvas.height+10;
+    });
+    draw();
+    animId = requestAnimationFrame(tick);
+  }
+
+  function endGame(){
+    running = false;
+    cancelAnimationFrame(animId);
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.font = "22px sans-serif"; ctx.fillStyle = "#24150F"; ctx.textAlign = "center";
+    ctx.fillText(`Time's up! You caught ${score} modaks 🍡`, canvas.width/2, canvas.height/2);
+    ctx.textAlign = "left";
+    startBtn.textContent = "▶ Play Again";
+    startBtn.disabled = false;
+    if(score >= 10) burstConfetti();
+  }
+
+  startBtn.addEventListener("click", () => {
+    score = 0; timeLeft = 30; modaks = []; lastSpawn = 0;
+    scoreEl.textContent = "0"; timeEl.textContent = "30";
+    startBtn.disabled = true; startBtn.textContent = "Playing…";
+    running = true;
+    animId = requestAnimationFrame(tick);
+    const countdown = setInterval(() => {
+      timeLeft--; timeEl.textContent = timeLeft;
+      if(timeLeft <= 0){ clearInterval(countdown); endGame(); }
+    }, 1000);
+  });
+
+  draw();
+}
+
+/* ===== Ganesh Chaturthi quiz ===== */
+function setupQuiz(){
+  const box = document.getElementById("quiz-box");
+  if(!box) return;
+
+  const QUESTIONS = [
+    { q: "What is Lord Ganesha's favourite sweet?", options: ["Modak","Jalebi","Barfi"], answer: 0 },
+    { q: "Who is Ganesha's mother?", options: ["Saraswati","Parvati","Lakshmi"], answer: 1 },
+    { q: "What is the final immersion of the idol called?", options: ["Aarti","Sthapana","Visarjan"], answer: 2 },
+    { q: "Which animal is Ganesha's vahana (vehicle)?", options: ["Mouse","Peacock","Lion"], answer: 0 },
+    { q: "What do we shout with joy during the festival?", options: ["Bappa Morya!","Jai Shri Ram!","Hare Krishna!"], answer: 0 },
+  ];
+
+  let current = 0, score = 0;
+
+  function renderQuestion(){
+    const item = QUESTIONS[current];
+    box.innerHTML = `
+      <p class="quiz-progress">Question ${current+1} of ${QUESTIONS.length}</p>
+      <p class="quiz-question">${item.q}</p>
+      <div class="quiz-options">
+        ${item.options.map((opt,i) => `<button class="quiz-option" data-i="${i}">${opt}</button>`).join("")}
+      </div>
+    `;
+    box.querySelectorAll(".quiz-option").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const chosen = Number(btn.dataset.i);
+        box.querySelectorAll(".quiz-option").forEach(b => b.disabled = true);
+        if(chosen === item.answer){ btn.classList.add("correct"); score++; }
+        else{
+          btn.classList.add("wrong");
+          box.querySelector(`[data-i="${item.answer}"]`).classList.add("correct");
+        }
+        setTimeout(() => {
+          current++;
+          if(current < QUESTIONS.length) renderQuestion();
+          else renderResult();
+        }, 900);
+      });
+    });
+  }
+
+  function renderResult(){
+    box.innerHTML = `
+      <div class="quiz-result">
+        <h3>${score}/${QUESTIONS.length} correct! 🐘</h3>
+        <p>${score === QUESTIONS.length ? "Perfect! You truly know Bappa!" : "Ganpati Bappa Morya! Try again to get a perfect score."}</p>
+        <button class="btn btn-primary" id="quiz-retry">🔄 Play Again</button>
+      </div>
+    `;
+    if(score >= 3) burstConfetti();
+    document.getElementById("quiz-retry").addEventListener("click", () => {
+      current = 0; score = 0; renderQuestion();
+    });
+  }
+
+  renderQuestion();
 }
 
 /* =========================================================
@@ -400,4 +566,6 @@ document.addEventListener("DOMContentLoaded", () => {
   setupCountdown();
   setupBell();
   setupDiyaWall();
+  setupModakGame();
+  setupQuiz();
 });
