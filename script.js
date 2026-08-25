@@ -30,7 +30,7 @@ const SITE_CONFIG = {
   GALLERY: [
     { src: "images/memory-1.jpeg", alt: "Ganesh Chaturthi memory 1" },
     { src: "images/memory-2.jpeg", alt: "Ganesh Chaturthi memory 2" },
-    { src: "images/memory-3.jpeg", alt: "Ganesh Chaturthi memory 3" },
+    { type: "video", videoId: "https://youtu.be/MxMA8TQFH-Y", alt: "Ganesh Chaturthi memory 3" },
     { src: "images/memory-4.jpeg", alt: "Ganesh Chaturthi memory 4" },
     { src: "images/memory-5.jpeg", alt: "Ganesh Chaturthi memory 5" },
     { src: "images/memory-6.jpeg", alt: "Ganesh Chaturthi memory 6" },
@@ -119,24 +119,38 @@ function renderGallery() {
   const gallery = document.getElementById("gallery");
   if (!gallery) return;
 
-  gallery.innerHTML = SITE_CONFIG.GALLERY.map((photo, i) => `
-    <button class="gallery-item media-frame reveal" type="button"
-            data-index="${i}" aria-label="Open photo: ${photo.alt}"
-            data-placeholder-label="Photo coming soon">
-      <img src="${photo.src}" alt="${photo.alt}" loading="lazy"
-           onerror="this.closest('.gallery-item').classList.add('media-frame--placeholder')" />
-      <span class="gallery-overlay"><span>${photo.alt}</span></span>
-    </button>
-  `).join("");
+  gallery.innerHTML = SITE_CONFIG.GALLERY.map((item, i) => {
+    if (item.type === "video") {
+      const thumb = `https://img.youtube.com/vi/${item.videoId}/hqdefault.jpg`;
+      return `
+        <button class="gallery-item media-frame reveal gallery-item--video" type="button"
+                data-index="${i}" aria-label="Play video: ${item.alt}">
+          <img src="${thumb}" alt="${item.alt}" loading="lazy" />
+          <span class="play-icon" aria-hidden="true">&#9658;</span>
+          <span class="gallery-overlay"><span>${item.alt}</span></span>
+        </button>`;
+    }
+    return `
+      <button class="gallery-item media-frame reveal" type="button"
+              data-index="${i}" aria-label="Open photo: ${item.alt}"
+              data-placeholder-label="Photo coming soon">
+        <img src="${item.src}" alt="${item.alt}" loading="lazy"
+             onerror="this.closest('.gallery-item').classList.add('media-frame--placeholder')" />
+        <span class="gallery-overlay"><span>${item.alt}</span></span>
+      </button>`;
+  }).join("");
 
   gallery.querySelectorAll(".gallery-item").forEach((item) => {
     item.addEventListener("click", () => {
       const idx = Number(item.dataset.index);
-      const photo = SITE_CONFIG.GALLERY[idx];
-      const img = item.querySelector("img");
-      // Don't open the lightbox for a broken/placeholder image
+      const data = SITE_CONFIG.GALLERY[idx];
       if (item.classList.contains("media-frame--placeholder")) return;
-      openLightbox(img.src, photo.alt);
+      if (data.type === "video") {
+        openLightboxVideo(data.videoId, data.alt);
+      } else {
+        const img = item.querySelector("img");
+        openLightbox(img.src, data.alt);
+      }
     });
   });
 }
@@ -188,13 +202,24 @@ function renderBackgroundIdols() {
    ========================================================= */
 const lightbox = document.getElementById("lightbox");
 const lightboxImg = document.getElementById("lightbox-img");
+const lightboxVideo = document.getElementById("lightbox-video");
 const lightboxClose = document.getElementById("lightbox-close");
 let lastFocusedEl = null;
 
 function openLightbox(src, alt) {
   lastFocusedEl = document.activeElement;
-  lightboxImg.src = src;
-  lightboxImg.alt = alt;
+  lightboxImg.src = src; lightboxImg.alt = alt; lightboxImg.style.display = "";
+  lightboxVideo.style.display = "none"; lightboxVideo.src = "";
+  lightbox.hidden = false;
+  document.body.style.overflow = "hidden";
+  lightboxClose.focus();
+}
+
+function openLightboxVideo(videoId, alt) {
+  lastFocusedEl = document.activeElement;
+  lightboxImg.style.display = "none"; lightboxImg.src = "";
+  lightboxVideo.style.display = ""; lightboxVideo.title = alt;
+  lightboxVideo.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
   lightbox.hidden = false;
   document.body.style.overflow = "hidden";
   lightboxClose.focus();
@@ -203,6 +228,7 @@ function openLightbox(src, alt) {
 function closeLightbox() {
   lightbox.hidden = true;
   lightboxImg.src = "";
+  lightboxVideo.src = "";
   document.body.style.overflow = "";
   if (lastFocusedEl) lastFocusedEl.focus();
 }
@@ -214,7 +240,6 @@ lightbox?.addEventListener("click", (e) => {
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape" && !lightbox.hidden) closeLightbox();
 });
-
 /* =========================================================
    MOBILE MENU
    ========================================================= */
