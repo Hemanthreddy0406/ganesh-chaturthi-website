@@ -30,7 +30,7 @@ const SITE_CONFIG = {
   GALLERY: [
     { src: "images/memory-1.jpeg", alt: "Ganesh Chaturthi memory 1" },
     { src: "images/memory-2.jpeg", alt: "Ganesh Chaturthi memory 2" },
-    { type: "video", videoId: "https://youtu.be/MxMA8TQFH-Y", alt: "Ganesh Chaturthi memory 3" },
+    { type: "video", videoId: "https://www.youtube.com/watch?v=MxMA8TQFH-Y", alt: "Ganesh Chaturthi memory 3" },
     { src: "images/memory-4.jpeg", alt: "Ganesh Chaturthi memory 4" },
     { src: "images/memory-5.jpeg", alt: "Ganesh Chaturthi memory 5" },
     { src: "images/memory-6.jpeg", alt: "Ganesh Chaturthi memory 6" },
