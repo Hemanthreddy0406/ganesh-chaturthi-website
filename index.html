@@ -18,12 +18,12 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="style.css" />
-<div class="scroll-progress" id="scroll-progress" aria-hidden="true"></div>
-<div class="petal-field" id="petal-field" aria-hidden="true"></div>
 </head>
 <body>
 
 <a class="skip-link" href="#main">Skip to content</a>
+  <div class="scroll-progress" id="scroll-progress" aria-hidden="true"></div>
+<div class="petal-field" id="petal-field" aria-hidden="true"></div>
 
 <!-- ============ NAVIGATION ============ -->
 <header class="site-header" id="site-header">
@@ -373,9 +373,11 @@
 </main>
 
 <!-- ============ LIGHTBOX ============ -->
-<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Photo viewer" hidden>
-  <button class="lightbox-close" id="lightbox-close" aria-label="Close photo viewer">&times;</button>
+<!-- ============ LIGHTBOX ============ -->
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Photo and video viewer" hidden>
+  <button class="lightbox-close" id="lightbox-close" aria-label="Close viewer">&times;</button>
   <img id="lightbox-img" src="" alt="" />
+  <iframe id="lightbox-video" class="lightbox-video" title="" allow="autoplay; encrypted-media" allowfullscreen></iframe>
 </div>
 
 <!-- ============ FOOTER ============ -->
