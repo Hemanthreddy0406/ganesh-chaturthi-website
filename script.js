@@ -549,6 +549,38 @@ function setupQuiz(){
   renderQuestion();
 }
 
+function setupThankYouWall(){
+  const form = document.getElementById("thankyou-form"), grid = document.getElementById("thankyou-wall-grid"),
+        input = document.getElementById("thankyou-name");
+  if(!form || !grid) return;
+  const KEY = "ganesh2026_contributors", MAX = 80;
+  const load = () => { try{ return JSON.parse(localStorage.getItem(KEY)) || []; }catch(e){ return []; } };
+  const save = (list) => { try{ localStorage.setItem(KEY, JSON.stringify(list)); }catch(e){} };
+  const render = (list) => { grid.innerHTML = list.map(name =>
+    `<div class="thankyou-chip"><span class="heart" aria-hidden="true">❤</span>${name}</div>`
+  ).join(""); };
+  let contributors = load();
+  render(contributors);
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const name = input.value.trim();
+    if(!name) return;
+    contributors.unshift(name);
+    if(contributors.length > MAX) contributors = contributors.slice(0, MAX);
+    save(contributors); render(contributors); input.value = "";
+    burstConfetti();
+  });
+}
+
+function setupShareButton(){
+  const btn = document.getElementById("share-fab");
+  if(!btn) return;
+  btn.addEventListener("click", () => {
+    const url = window.location.href;
+    const message = `Ganpati Bappa Morya! 🙏 Check out our colony's Ganesh Chaturthi 2026 website: ${url}`;
+    window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, "_blank", "noopener");
+  });
+}
 /* =========================================================
    INIT
    ========================================================= */
@@ -568,4 +600,6 @@ document.addEventListener("DOMContentLoaded", () => {
   setupDiyaWall();
   setupModakGame();
   setupQuiz();
+  setupThankYouWall();
+  setupShareButton();
 });
